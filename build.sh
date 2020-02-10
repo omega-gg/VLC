@@ -5,7 +5,7 @@ set -e
 # Settings
 #--------------------------------------------------------------------------------------------------
 
-VLC_version="3.6.0"
+VLC_version="3.0.6"
 
 #--------------------------------------------------------------------------------------------------
 # Syntax
@@ -29,7 +29,7 @@ if [ $1 = "win32" -o $1 = "win64" ]; then
 
     os="windows"
 else
-    os=""
+    os="default"
 fi
 
 VLC="https://download.videolan.org/pub/videolan/vlc/$VLC_version/vlc-$VLC_version.tar.xz"
