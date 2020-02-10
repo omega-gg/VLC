@@ -12,20 +12,44 @@ jobs:
 # Linux
 #--------------------------------------------------------------------------------------------------
 
-- job: linux64
+#- job: linux64
+#  pool:
+#    vmImage: "ubuntu-latest"
+#  steps:
+#  - bash: |
+#      docker run -d --name ubuntu -v $PWD:/VLC amd64/ubuntu:18.04 tail -f /dev/null
+#      docker exec -t ubuntu bash -c "cd /VLC/..;
+#                                     sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list;
+#                                     apt-get update;
+#                                     apt-get -y install sudo zip git;
+#                                     git clone https://github.com/omega-gg/VLC;
+#                                     cd VLC;
+#                                     sh build.sh linux;
+#                                     cd deploy;
+#                                     zip -rq ../VLC.zip *"
+#  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
+#    artifact: VLC-linux64
+
+#--------------------------------------------------------------------------------------------------
+# Android
+#--------------------------------------------------------------------------------------------------
+
+- job: android32
   pool:
     vmImage: "ubuntu-latest"
   steps:
   - bash: |
       docker run -d --name ubuntu -v $PWD:/VLC amd64/ubuntu:18.04 tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC/..;
-                                     sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list;
                                      apt-get update;
-                                     apt-get -y install sudo zip git;
+                                     apt-get -y install sudo curl zip git;
+                                     git clone https://github.com/omega-gg/3rdparty;
                                      git clone https://github.com/omega-gg/VLC;
-                                     cd VLC;
-                                     sh build.sh linux;
+                                     cd 3rdparty;
+                                     bash generate.sh android32;
+                                     cd ../VLC;
+                                     sh build.sh android32;
                                      cd deploy;
                                      zip -rq ../VLC.zip *"
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
-    artifact: VLC-linux64
+    artifact: VLC-android32
