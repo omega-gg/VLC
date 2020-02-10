@@ -19,6 +19,7 @@ jobs:
   - bash: |
       docker run -d --name ubuntu -v $PWD:/VLC amd64/ubuntu:18.04 tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC/..;
+                                     sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list;
                                      apt-get update;
                                      apt-get -y install sudo zip git;
                                      git clone https://github.com/omega-gg/VLC;
