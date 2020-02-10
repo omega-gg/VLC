@@ -182,7 +182,7 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "android32" ]; then
 
-    sh buildsystem/compile.sh -r -l -a armeabi-v7a
+    sh buildsystem/compile-libvlc.sh -r -l -a armeabi-v7a
 else
     make
     make install
