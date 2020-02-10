@@ -59,7 +59,7 @@ NDK="$external/NDK/$NDK_version"
 
 if [ $os = "android" ]; then
 
-    VLC_url="https://code.videolan.org/videolan/vlc-android/tree/$VLC_version"
+    VLC_url="https://code.videolan.org/videolan/vlc-android"
 else
     VLC_url="https://download.videolan.org/pub/videolan/vlc/$VLC_version/vlc-$VLC_version.tar.xz"
 fi
@@ -100,6 +100,10 @@ echo $VLC_url
 if [ $os = "android" ]; then
 
     git clone $VLC_url vlc-$VLC_version
+
+    cd vlc-$VLC_version
+
+    git checkout tags/$VLC_version
 else
     curl -L -o VLC.tar.xz $VLC_url
 fi
@@ -144,9 +148,9 @@ fi
 echo ""
 echo "CONFIGURING VLC"
 
-cd vlc-$VLC_version
-
 if [ $1 = "linux" ]; then
+
+    cd vlc-$VLC_version
 
     ./configure --prefix=$PWD/../deploy
 
