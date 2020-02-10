@@ -5,7 +5,7 @@ set -e
 # Settings
 #--------------------------------------------------------------------------------------------------
 
-external="../3rdparty"
+external="$PWD/../3rdparty"
 
 #--------------------------------------------------------------------------------------------------
 
@@ -45,8 +45,6 @@ if [ $1 = "win32" -o $1 = "win64" ]; then
 elif [ $1 = "android32" -o $1 = "android64" ]; then
 
     os="android"
-
-    VLC_version=$VLC_version_android
 else
     os="default"
 fi
@@ -57,11 +55,11 @@ NDK="$external/NDK/$NDK_version"
 
 #--------------------------------------------------------------------------------------------------
 
+VLC_url="https://download.videolan.org/pub/videolan/vlc/$VLC_version/vlc-$VLC_version.tar.xz"
+
 if [ $os = "android" ]; then
 
-    VLC_url="https://code.videolan.org/videolan/vlc-android"
-else
-    VLC_url="https://download.videolan.org/pub/videolan/vlc/$VLC_version/vlc-$VLC_version.tar.xz"
+    VLC_url_android="https://code.videolan.org/videolan/vlc-android"
 fi
 
 #--------------------------------------------------------------------------------------------------
@@ -99,16 +97,7 @@ echo ""
 echo "DOWNLOADING VLC"
 echo $VLC_url
 
-if [ $os = "android" ]; then
-
-    git clone $VLC_url vlc-$VLC_version
-
-    cd vlc-$VLC_version
-
-    git checkout tags/$VLC_version
-else
-    curl -L -o VLC.tar.xz $VLC_url
-fi
+curl -L -o VLC.tar.xz $VLC_url
 
 #--------------------------------------------------------------------------------------------------
 # Extract
@@ -132,6 +121,26 @@ elif [ $os != "android" ]; then
 fi
 
 #--------------------------------------------------------------------------------------------------
+# Clone
+#--------------------------------------------------------------------------------------------------
+
+if [ $os = "android" ]; then
+
+    echo ""
+    echo "CLONING VLC"
+    echo $VLC_url
+
+    mv vlc-$VLC_version vlc
+
+    git clone $VLC_url_android vlc-$VLC_version
+
+    mv vlc vlc-$VLC_version
+
+    #git checkout tags/$VLC_version
+fi
+
+
+#--------------------------------------------------------------------------------------------------
 # Dependencies
 #--------------------------------------------------------------------------------------------------
 
@@ -150,9 +159,9 @@ fi
 echo ""
 echo "CONFIGURING VLC"
 
-if [ $1 = "linux" ]; then
+cd vlc-$VLC_version
 
-    cd vlc-$VLC_version
+if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
@@ -175,7 +184,7 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "android32" ]; then
 
-    sh compile.sh -r -l -a armeabi-v7a
+    sh buildsystem/compile.sh -r -l -a armeabi-v7a
 else
     make
     make install
