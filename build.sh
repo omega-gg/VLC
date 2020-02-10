@@ -99,6 +99,8 @@ mv vlc-$VLC_version/* deploy
 
 cd deploy
 
+ls -la
+
 if [ $os = "windows" ]; then
 
     mingw32-make
