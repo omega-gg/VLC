@@ -92,9 +92,12 @@ sudo apt-get -y build-dep vlc
 # Configure
 #--------------------------------------------------------------------------------------------------
 
+echo ""
+echo "CONFIGURING VLC"
+
 cd vlc-$VLC_version
 
-./configure --prefix=$PWD/deploy
+./configure --prefix=$PWD/../deploy
 
 #--------------------------------------------------------------------------------------------------
 # Build
@@ -106,6 +109,8 @@ echo "BUILDING VLC"
 if [ $os = "windows" ]; then
 
     mingw32-make
+    mingw32-make install
 else
     make
+    make install
 fi
