@@ -16,7 +16,7 @@ VLC_version="3.0.6"
 
 NDK_version="21"
 
-VLC_version_android="3.2.7-1"
+#VLC_version_android="3.2.7-1"
 
 #--------------------------------------------------------------------------------------------------
 # Syntax
@@ -111,9 +111,7 @@ if [ $os = "windows" ]; then
 
     7z x VLC.tar.xz
     7z x VLC.tar
-
-elif [ $os != "android" ]; then
-
+else
     echo ""
     echo "EXTRACTING VLC"
 
@@ -128,7 +126,7 @@ if [ $os = "android" ]; then
 
     echo ""
     echo "CLONING VLC"
-    echo $VLC_url
+    echo $VLC_url_android
 
     mv vlc-$VLC_version vlc
 
