@@ -42,7 +42,7 @@ if [ $1 = "win32" -o $1 = "win64" ]; then
 
     os="windows"
 
-if [ $1 = "android32" -o $1 = "android64" ]; then
+elif [ $1 = "android32" -o $1 = "android64" ]; then
 
     os="android"
 
