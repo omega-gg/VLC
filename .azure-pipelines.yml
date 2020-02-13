@@ -46,7 +46,8 @@ jobs:
       docker exec -t ubuntu bash -c "cd /VLC;
                                      git clone https://github.com/videolan/vlc-android;
                                      cd vlc-android;
-                                     sh compile.sh -r -a armeabi-v7a
+                                     sh compile.sh -r -a armeabi-v7a;
+                                     cd -;
                                      zip -rq VLC.zip *"
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
