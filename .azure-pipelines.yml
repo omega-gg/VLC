@@ -46,7 +46,8 @@ jobs:
       docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       echo "running"
       docker exec -t ubuntu bash -c "cd /VLC;
-                                     git clone https://github.com/videolan/vlc-android;
+                                     sudo su;
+                                     sudo git clone https://github.com/videolan/vlc-android;
                                      cd vlc-android;
                                      sh compile.sh -r -a armeabi-v7a;
                                      cd -;
