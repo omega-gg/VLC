@@ -39,17 +39,14 @@ jobs:
     vmImage: "ubuntu-latest"
   steps:
   - bash: |
-      docker run -d --name ubuntu -v $PWD:/VLC amd64/ubuntu:18.04 tail -f /dev/null
-      docker exec -t ubuntu bash -c "cd /VLC/..;
-                                     apt-get update;
-                                     apt-get -y install sudo curl zip git;
-                                     git clone https://github.com/omega-gg/3rdparty;
-                                     git clone https://github.com/omega-gg/VLC;
-                                     cd 3rdparty;
-                                     bash generate.sh android32;
-                                     cd ../VLC;
-                                     sh build.sh android32;
-                                     cd deploy;
-                                     zip -rq ../VLC.zip *"
+      git clone https://github.com/omega-gg/docker
+      cd docker
+      sh load.sh debian-vlc-android
+      docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
+      docker exec -t ubuntu bash -c "cd /VLC;
+                                     git clone https://github.com/videolan/vlc-android;
+                                     cd vlc-android;
+                                     sh compile.sh -r -a armeabi-v7a
+                                     zip -rq VLC.zip *"
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
