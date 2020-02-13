@@ -133,9 +133,9 @@ if [ $os = "android" ]; then
 
     echo ""
     echo "CLONING VLC"
-    echo $VLC_url_android
+    echo $VLC_url
 
-    git clone $VLC_url_android vlc-$VLC_version
+    git clone $VLC_url vlc-$VLC_version
 fi
 
 
