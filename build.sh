@@ -14,7 +14,7 @@ VLC_version="3.0.6"
 #--------------------------------------------------------------------------------------------------
 # Android
 
-NDK_version="21"
+#NDK_version="21"
 
 VLC_version_android="3.2.7-1"
 
@@ -53,7 +53,7 @@ fi
 
 #--------------------------------------------------------------------------------------------------
 
-NDK="$external/NDK/$NDK_version"
+#NDK="$external/NDK/$NDK_version"
 
 #--------------------------------------------------------------------------------------------------
 
@@ -166,7 +166,7 @@ if [ $1 = "linux" ]; then
 
 elif [ $os = "android" ]; then
 
-    export ANDROID_NDK="$NDK"
+    #export ANDROID_NDK="$NDK"
 
     git checkout tags/$VLC_version
 fi
