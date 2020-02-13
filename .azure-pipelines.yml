@@ -41,6 +41,7 @@ jobs:
   - bash: |
       git clone https://github.com/omega-gg/docker
       cd docker
+      ls -la
       sh load.sh debian-vlc-android
       docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC;
