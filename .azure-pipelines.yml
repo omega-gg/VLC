@@ -43,9 +43,11 @@ jobs:
       cd docker
       sh load.sh debian-vlc-android
       echo "loaded"
-      docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
+      docker run -d --name debian-vlc-android -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       echo "running"
-      docker exec -t ubuntu bash -c "cd /VLC;
+      docker exec -t debian-vlc-android bash -c "cd /VLC;
+                                     apt-get update;
+                                     apt-get -y install sudo;
                                      sudo su;
                                      sudo git clone https://github.com/videolan/vlc-android;
                                      cd vlc-android;
