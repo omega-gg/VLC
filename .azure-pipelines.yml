@@ -35,6 +35,7 @@ jobs:
 #--------------------------------------------------------------------------------------------------
 
 - job: android32
+  timeoutInMinutes: 120
   pool:
     vmImage: "ubuntu-latest"
   steps:
@@ -43,6 +44,7 @@ jobs:
       git clone https://github.com/omega-gg/docker
       cd docker
       sh load.sh debian-vlc-android
+      cd -
       chmod 777 .
       docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC;
