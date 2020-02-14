@@ -57,3 +57,23 @@ jobs:
       sudo zip -rq ../../VLC.zip *
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
+
+- job: android64
+  timeoutInMinutes: 120
+  pool:
+    vmImage: "ubuntu-latest"
+  steps:
+  - bash: |
+      git clone https://github.com/omega-gg/docker
+      cd docker
+      sh load.sh debian-vlc-android
+      cd -
+      docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
+      docker exec -t ubuntu bash -c "cd /VLC;
+                                     git clone https://github.com/omega-gg/VLC;
+                                     cd VLC;
+                                     sh build.sh android64"
+      cd VLC/deploy
+      zip -rq ../../VLC.zip *
+  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
+    artifact: VLC-android64

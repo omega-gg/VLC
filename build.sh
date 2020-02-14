@@ -186,6 +186,10 @@ if [ $os = "windows" ]; then
 elif [ $1 = "android32" ]; then
 
     sh compile.sh -r -a armeabi-v7a
+
+elif [ $1 = "android64" ]; then
+
+    sh compile.sh -r -a arm64-v8a
 else
     make
     make install
