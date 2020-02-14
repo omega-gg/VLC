@@ -47,9 +47,8 @@ jobs:
       docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC;
                                      git clone https://github.com/omega-gg/VLC;
-                                     cd VLC;
-                                     sh build.sh android32"
+                                     cd VLC"
       cd VLC/deploy
-      zip -rq ../../VLC.zip *"
+      zip -rq ../../VLC.zip *
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
