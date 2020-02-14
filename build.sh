@@ -200,7 +200,6 @@ if [ $os = "android" ]; then
     echo ""
     echo "DEPLOYING VLC"
 
-    cd -
-
-    mv vlc-$VLC_version deploy
+    mv libvlc      ../deploy
+    mv vlc-android ../deploy
 fi
