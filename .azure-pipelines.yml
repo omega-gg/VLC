@@ -49,6 +49,8 @@ jobs:
                                      git clone https://github.com/omega-gg/VLC;
                                      cd VLC"
       cd VLC/deploy
+      pwd
+      ls -la
       zip -rq ../../VLC.zip *
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
