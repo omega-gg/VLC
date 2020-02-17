@@ -40,7 +40,6 @@ jobs:
     vmImage: "ubuntu-latest"
   steps:
   - bash: |
-      apt-get -y install sudo zip
       git clone https://github.com/omega-gg/docker
       cd docker
       sh load.sh debian-vlc-android
@@ -52,8 +51,6 @@ jobs:
                                      cd VLC;
                                      sh build.sh android32"
       cd VLC/deploy
-      pwd
-      ls -la
       sudo zip -rq ../../VLC.zip *
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-android32
