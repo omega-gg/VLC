@@ -204,6 +204,8 @@ if [ $os = "android" ]; then
     echo ""
     echo "DEPLOYING VLC"
 
+    mv vlc/include ../deploy
+
     mv libvlc      ../deploy
     mv vlc-android ../deploy
 fi
