@@ -24,13 +24,9 @@ VLC_version_android="3.2.7-1"
 
 if [ $# != 1 ] \
    || \
-   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "androidv7" -a \
-                                                                         $1 != "androidv8" -a \
-                                                                         $1 != "android32" -a \
-                                                                         $1 != "android64" ]; then
+   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "android" ]; then
 
-    echo \
-    "Usage: build <win32 | win64 | macOS | linux | androidv7 | androidv8 | android32 | android64>"
+    echo "Usage: build <win32 | win64 | macOS | linux | android>"
 
     exit 1
 fi
@@ -45,9 +41,7 @@ if [ $1 = "win32" -o $1 = "win64" ]; then
 
     os="windows"
 
-elif [ $1 = "android32" -o $1 = "android64" ]; then
-
-    os="android"
+elif [ $1 = "android" ]; then
 
     VLC_version=$VLC_version_android
 else
@@ -60,7 +54,7 @@ fi
 
 #--------------------------------------------------------------------------------------------------
 
-if [ $os = "android" ]; then
+if [ $1 = "android" ]; then
 
     VLC_url="https://code.videolan.org/videolan/vlc-android"
 else
@@ -87,7 +81,7 @@ if [ $1 = "linux" ]; then
 
     sudo apt-get -y install build-essential pkg-config libtool automake autopoint gettext
 
-#elif [ $os = "android" ]; then
+#elif [ $1 = "android" ]; then
 #
 #    sudo apt-get -y install automake ant autopoint cmake build-essential libtool-bin patch \
 #                            pkg-config protobuf-compiler ragel subversion unzip git \
@@ -98,7 +92,7 @@ fi
 # Download
 #--------------------------------------------------------------------------------------------------
 
-if [ $os != "android" ]; then
+if [ $1 != "android" ]; then
 
     echo ""
     echo "DOWNLOADING VLC"
@@ -120,7 +114,7 @@ if [ $os = "windows" ]; then
     7z x VLC.tar.xz > nul
     7z x VLC.tar    > nul
 
-elif [ $os != "android" ]; then
+elif [ $1 != "android" ]; then
 
     echo ""
     echo "EXTRACTING VLC"
@@ -132,7 +126,7 @@ fi
 # Clone
 #--------------------------------------------------------------------------------------------------
 
-if [ $os = "android" ]; then
+if [ $1 = "android" ]; then
 
     echo ""
     echo "CLONING VLC"
@@ -140,7 +134,6 @@ if [ $os = "android" ]; then
 
     git clone $VLC_url vlc-$VLC_version
 fi
-
 
 #--------------------------------------------------------------------------------------------------
 # Dependencies
@@ -167,7 +160,7 @@ if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
-elif [ $os = "android" ]; then
+elif [ $1 = "android" ]; then
 
     #export ANDROID_NDK="$NDK"
 
@@ -186,20 +179,11 @@ if [ $os = "windows" ]; then
     mingw32-make
     mingw32-make install
 
-elif [ $1 = "androidv7" ]; then
+elif [ $1 = "android" ]; then
 
     sh compile.sh -r -l -a armeabi-v7a
-
-elif [ $1 = "androidv8" ]; then
-
     sh compile.sh -r -l -a arm64-v8a
-
-elif [ $1 = "android32" ]; then
-
     sh compile.sh -r -l -a x86
-
-elif [ $1 = "android64" ]; then
-
     sh compile.sh -r -l -a x86_64
 else
     make

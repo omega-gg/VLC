@@ -76,7 +76,7 @@ jobs:
 #  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
 #    artifact: VLC-androidv8
 
-- job: android32
+- job: android
   timeoutInMinutes: 120
   pool:
     vmImage: "ubuntu-latest"
@@ -91,8 +91,8 @@ jobs:
       docker exec -t ubuntu bash -c "cd /VLC;
                                      git clone https://github.com/omega-gg/VLC;
                                      cd VLC;
-                                     sh build.sh android32"
+                                     sh build.sh android"
       cd VLC/deploy
       sudo zip -rq ../../VLC.zip *
   - publish: $(System.DefaultWorkingDirectory)/VLC.zip
-    artifact: VLC-android32
+    artifact: VLC-android
