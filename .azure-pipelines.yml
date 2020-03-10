@@ -34,48 +34,6 @@ jobs:
 # Android
 #--------------------------------------------------------------------------------------------------
 
-#- job: androidv7
-#  timeoutInMinutes: 120
-#  pool:
-#    vmImage: "ubuntu-latest"
-#  steps:
-#  - bash: |
-#      git clone https://github.com/omega-gg/docker
-#      cd docker
-#      sh load.sh debian-vlc-android
-#      cd -
-#      chmod 777 .
-#      docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
-#      docker exec -t ubuntu bash -c "cd /VLC;
-#                                     git clone https://github.com/omega-gg/VLC;
-#                                     cd VLC;
-#                                     sh build.sh androidv7"
-#      cd VLC/deploy
-#      sudo zip -rq ../../VLC.zip *
-#  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
-#    artifact: VLC-androidv7
-
-#- job: androidv8
-#  timeoutInMinutes: 120
-#  pool:
-#    vmImage: "ubuntu-latest"
-#  steps:
-#  - bash: |
-#      git clone https://github.com/omega-gg/docker
-#      cd docker
-#      sh load.sh debian-vlc-android
-#      cd -
-#      chmod 777 .
-#      docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
-#      docker exec -t ubuntu bash -c "cd /VLC;
-#                                     git clone https://github.com/omega-gg/VLC;
-#                                     cd VLC;
-#                                     sh build.sh androidv8"
-#      cd VLC/deploy
-#      sudo zip -rq ../../VLC.zip *
-#  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
-#    artifact: VLC-androidv8
-
 - job: android
   timeoutInMinutes: 120
   pool:
