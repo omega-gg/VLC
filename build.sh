@@ -24,10 +24,13 @@ VLC_version_android="3.2.7-1"
 
 if [ $# != 1 ] \
    || \
-   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "android32" -a \
+   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "androidv7" -a \
+                                                                         $1 != "androidv8" -a \
+                                                                         $1 != "android32" -a \
                                                                          $1 != "android64" ]; then
 
-    echo "Usage: build <win32 | win64 | macOS | linux | android32 | android64>"
+    echo \
+    "Usage: build <win32 | win64 | macOS | linux | androidv7 | androidv8 | android32 | android64>"
 
     exit 1
 fi
@@ -183,13 +186,21 @@ if [ $os = "windows" ]; then
     mingw32-make
     mingw32-make install
 
-elif [ $1 = "android32" ]; then
+elif [ $1 = "androidv7" ]; then
 
     sh compile.sh -r -l -a armeabi-v7a
 
-elif [ $1 = "android64" ]; then
+elif [ $1 = "androidv8" ]; then
 
     sh compile.sh -r -l -a arm64-v8a
+
+elif [ $1 = "android32" ]; then
+
+    sh compile.sh -r -l -a x86
+
+elif [ $1 = "android64" ]; then
+
+    sh compile.sh -r -l -a x86_64
 else
     make
     make install
