@@ -177,7 +177,7 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "android" ]; then
 
-    sh compile.sh -r
+    ./buildsystem/compile.sh -r
 else
     make
     make install
