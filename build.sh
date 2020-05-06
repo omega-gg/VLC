@@ -41,6 +41,8 @@ if [ $1 = "win32" -o $1 = "win64" ]; then
 
 elif [ $1 = "android" ]; then
 
+    os="default"
+
     VLC_version=$VLC_version_android
 else
     os="default"
