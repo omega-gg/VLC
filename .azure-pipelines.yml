@@ -40,10 +40,7 @@ jobs:
     vmImage: "ubuntu-latest"
   steps:
   - bash: |
-      git clone https://github.com/omega-gg/docker
-      cd docker
       docker build -t debian-vlc-android debian-vlc-android
-      cd -
       chmod 777 .
       docker run -d --name ubuntu -v $PWD:/VLC debian-vlc-android tail -f /dev/null
       docker exec -t ubuntu bash -c "cd /VLC;
