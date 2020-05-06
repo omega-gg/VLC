@@ -154,7 +154,7 @@ if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
-elif [ $1 = "android" ]; then
+#elif [ $1 = "android" ]; then
 
     #export ANDROID_NDK="$NDK"
 
