@@ -128,7 +128,7 @@ if [ $1 = "android" ]; then
     echo "CLONING VLC"
     echo $VLC_url
 
-    #git clone $VLC_url vlc-$VLC_version
+    git clone $VLC_url vlc-$VLC_version
 fi
 
 #--------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
-#elif [ $1 = "android" ]; then
+elif [ $1 = "android" ]; then
 
     #export ANDROID_NDK="$NDK"
 
