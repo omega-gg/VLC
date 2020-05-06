@@ -126,7 +126,7 @@ if [ $1 = "android" ]; then
     echo "CLONING VLC"
     echo $VLC_url
 
-    git clone $VLC_url vlc-$VLC_version
+    #git clone $VLC_url vlc-$VLC_version
 fi
 
 #--------------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ elif [ $1 = "android" ]; then
 
     #export ANDROID_NDK="$NDK"
 
-    git checkout tags/$VLC_version
+    #git checkout tags/$VLC_version
 fi
 
 #--------------------------------------------------------------------------------------------------
