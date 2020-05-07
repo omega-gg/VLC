@@ -156,9 +156,9 @@ if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
-#elif [ $1 = "android" ]; then
+elif [ $1 = "android" ]; then
 
-#    git checkout tags/$VLC_version
+    git checkout tags/$VLC_version
 fi
 
 #--------------------------------------------------------------------------------------------------
@@ -194,5 +194,5 @@ if [ $1 = "android" ]; then
 
     mv libvlc ../deploy
 
-    mv application ../deploy
+    mv application/app ../deploy
 fi
