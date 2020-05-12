@@ -107,8 +107,8 @@ if [ $os = "windows" ]; then
     echo ""
     echo "EXTRACTING VLC"
 
-    7z x VLC.tar.xz > null
-    7z x VLC.tar    > null
+    7z x VLC.tar.xz > /dev/null
+    7z x VLC.tar    > /dev/null
 
 elif [ $1 != "android" ]; then
 
