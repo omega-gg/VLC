@@ -16,7 +16,9 @@ ENV ANDROID_NDK="/sdk/android-ndk" \
 # - RPM based: <500 (CentOS, RedHat, etc.)
 ARG VIDEOLAN_CI_UID=499
 
-ENV PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:/sdk/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/:$PATH
+ARG CORES=8
+
+ENV PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:/sdk/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/:/opt/tools/bin:$PATH
 
 RUN addgroup --quiet --gid ${VIDEOLAN_CI_UID} videolan && \
     adduser --quiet --uid ${VIDEOLAN_CI_UID} --ingroup videolan videolan && \
@@ -26,7 +28,7 @@ RUN addgroup --quiet --gid ${VIDEOLAN_CI_UID} videolan && \
     ca-certificates autoconf m4 automake ant autopoint bison \
     flex build-essential libtool libtool-bin patch pkg-config ragel subversion \
     git yasm ragel g++ protobuf-compiler gettext meson ninja-build \
-    wget expect unzip python python3 locales libltdl-dev curl cmake automake && \
+    wget expect unzip python python3 locales libltdl-dev curl cmake automake nasm && \
     apt-get clean -y && rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
     echo "export ANDROID_NDK=${ANDROID_NDK}" >> /etc/profile.d/vlc_env.sh && \
@@ -59,7 +61,16 @@ RUN addgroup --quiet --gid ${VIDEOLAN_CI_UID} videolan && \
     rm -f OpenJDK8U-jdk_x64_linux_8u232b09.tar.gz && \
     cd sdk/android-sdk-linux && \
     tools/bin/sdkmanager "build-tools;26.0.1" "platform-tools" "platforms;android-26" && \
-    chown -R videolan /sdk
+    chown -R videolan /sdk && \
+    mkdir /build && cd /build && \
+    CMAKE_VERSION=3.17.0 && \
+    CMAKE_SHA256=b74c05b55115eacc4fa2b77a814981dbda05cdc95a53e279fe16b7b272f00847 && \
+    wget -q http://www.cmake.org/files/v3.17/cmake-$CMAKE_VERSION.tar.gz && \
+    echo $CMAKE_SHA256 cmake-$CMAKE_VERSION.tar.gz | sha256sum -c && \
+    tar xzf cmake-$CMAKE_VERSION.tar.gz && \
+    cd cmake-$CMAKE_VERSION && ./configure --prefix=/opt/tools/ --parallel=$CORES --no-qt-gui -- \
+        -DCMAKE_USE_OPENSSL:BOOL=OFF -DBUILD_TESTING:BOOL=OFF && make -j$CORES && make install && \
+    rm -rf /build
 
 ENV LANG en_US.UTF-8
 USER videolan
