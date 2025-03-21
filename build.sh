@@ -191,6 +191,8 @@ if [ $1 = "android" ]; then
     echo ""
     echo "DEPLOYING VLC"
 
+    ls -la
+
     #mv vlc/include ../deploy
 
     mv libvlc ../deploy
