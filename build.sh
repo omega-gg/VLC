@@ -14,7 +14,7 @@ VLC_version="3.0.16"
 #--------------------------------------------------------------------------------------------------
 # Android
 
-VLC_version_android="3.6.0"
+VLC_version_android="libvlc-3.6.0"
 
 #--------------------------------------------------------------------------------------------------
 # Syntax
@@ -175,7 +175,7 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "android" ]; then
 
-    sh buildsystem/compile.sh -r
+    sh buildsystem/compile.sh --release -l
 else
     make
     make install
