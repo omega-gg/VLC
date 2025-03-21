@@ -190,9 +190,9 @@ if [ $1 = "android" ]; then
     echo ""
     echo "DEPLOYING VLC"
 
-    mv vlc/include ../deploy
+    #mv vlc/include ../deploy
 
     mv libvlc ../deploy
 
-    mv application/app ../deploy
+    #mv application/app ../deploy
 fi
