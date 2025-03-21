@@ -36,7 +36,7 @@ RUN groupadd --gid ${VIDEOLAN_CI_UID} videolan && \
     echo "export ANDROID_NDK=${ANDROID_NDK}" >> /etc/profile.d/vlc_env.sh && \
     echo "export ANDROID_SDK=${ANDROID_SDK}" >> /etc/profile.d/vlc_env.sh && \
     mkdir sdk && cd sdk && \
-    ANDROID_NDK_VERSION=26.1.10909125 && \
+    ANDROID_NDK_VERSION=26b && \
     ANDROID_NDK_SHA256=f017ea1441fa720251d1d45d8cf49b431263a5ac7e46f5cf2b170c8bfbfc7413 && \
     wget -q https://dl.google.com/android/repository/android-ndk-r$ANDROID_NDK_VERSION-linux-x86_64.zip && \
     echo $ANDROID_NDK_SHA256 android-ndk-r$ANDROID_NDK_VERSION-linux-x86_64.zip | sha256sum -c && \
