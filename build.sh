@@ -175,7 +175,8 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "android" ]; then
 
-    sh buildsystem/compile.sh --release -l
+    # NOTE: Only build LibVLC and bypass source checks.
+    sh buildsystem/compile.sh --release -l -b
 else
     make
     make install
