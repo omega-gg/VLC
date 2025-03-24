@@ -195,7 +195,7 @@ if [ $1 = "android" ]; then
 
     #mv vlc/include ../deploy
 
-    mv libvlc ../deploy
+    mv libvlcjni ../deploy
 
-    #mv application/app ../deploy
+    mv application ../deploy
 fi
