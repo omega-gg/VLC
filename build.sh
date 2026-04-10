@@ -180,6 +180,8 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "linuxSnap" ]; then
 
+    ln -s extras/package/snap snap
+
     snapcraft
 
 elif [ $1 = "android" ]; then
