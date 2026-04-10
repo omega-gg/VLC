@@ -186,7 +186,7 @@ elif [ $1 = "linuxSnap" ]; then
 
     sed -i 's/source-type: git//' snap/snapcraft.yaml
 
-    sed -i "s|source: \.|source: $PWD|" snap/snapcraft.yaml
+    sed -i "s|^    source: \.$|    source: $PWD|" snap/snapcraft.yaml
 
     snapcraft
 
