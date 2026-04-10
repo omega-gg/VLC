@@ -181,14 +181,14 @@ if [ $os = "windows" ]; then
 elif [ $1 = "linuxSnap" ]; then
 
     # NOTE: Create a tar of the source to avoid snapcraft's local copy issues
-    tar cf ../vlc-source.tar .
+    tar cf /tmp/vlc-source.tar .
 
     mkdir -p snap
 
     cp extras/package/snap/snapcraft.yaml snap/
 
     sed -i 's/source-type: git/source-type: tar/' snap/snapcraft.yaml
-    sed -i "s|^    source: \.$|    source: ../vlc-source.tar|" snap/snapcraft.yaml
+    sed -i 's|source: \.|source: /tmp/vlc-source.tar|' snap/snapcraft.yaml
 
     snapcraft
 
