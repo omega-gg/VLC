@@ -184,7 +184,9 @@ elif [ $1 = "linuxSnap" ]; then
 
     cp extras/package/snap/snapcraft.yaml snap
 
-    snapcraft --destructive-mode
+    sed -i 's/source-type: git//' snap/snapcraft.yaml
+
+    snapcraft
 
 elif [ $1 = "android" ]; then
 
