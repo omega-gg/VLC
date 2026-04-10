@@ -82,10 +82,6 @@ if [ $1 = "linux" ]; then
 
     sudo apt-get -y install build-essential pkg-config libtool automake autopoint gettext
 
-elif [ $1 = "linuxSnap" ]; then
-
-    apt-get -y install sudo squashfs-tools snapcraft
-
 #elif [ $1 = "android" ]; then
 #
 #    sudo apt-get -y install automake ant autopoint cmake build-essential libtool-bin patch \
