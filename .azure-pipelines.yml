@@ -17,7 +17,7 @@ jobs:
     vmImage: "ubuntu-latest"
   steps:
   - bash: |
-      docker run -d --name ubuntu -v $PWD:/VLC registry.videolan.org/vlc-ubuntu-bionic:20250904134924 tail -f /dev/null
+      docker run -d --name ubuntu -v $PWD:/VLC snapcore/snapcraft:stable tail -f /dev/null
       docker exec -u 0 -t ubuntu bash -c "cd /VLC/..;
                                           sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list;
                                           apt-get update;
