@@ -182,9 +182,9 @@ elif [ $1 = "linuxSnap" ]; then
 
     mkdir -p snap
 
-    cp extras/package/snap/snapcraft.yaml snap
+    cp extras/package/snap/snapcraft.yaml snap/
 
-    snapcraft
+    snapcraft --destructive-mode
 
 elif [ $1 = "android" ]; then
 
