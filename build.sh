@@ -84,7 +84,8 @@ if [ $1 = "linux" ]; then
 
 elif [ $1 = "linuxSnap" ]; then
 
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -y install snapcraft squashfs-tools
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3-pip squashfs-tools
+    sudo pip3 install snapcraft
 
 #elif [ $1 = "android" ]; then
 #
