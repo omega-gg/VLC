@@ -14,24 +14,20 @@ jobs:
 
 - job: linux64
   pool:
-    vmImage: "ubuntu-latest"
+    vmImage: "ubuntu-22.04"
   steps:
   - checkout: none
   - bash: |
-      docker run -d --name ubuntu -e DEBIAN_FRONTEND=noninteractive amd64/ubuntu:22.04 tail -f /dev/null
-      docker exec -t ubuntu bash -c "
-        set -e
-        sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
-        apt-get update -qq
-        apt-get -y install sudo zip git
-        git clone https://github.com/omega-gg/VLC
-        cd VLC
-        sh build.sh linuxSnap
-        cd deploy
-        zip -rq /tmp/VLC.zip *
-      "
-      docker cp ubuntu:/tmp/VLC.zip $(System.DefaultWorkingDirectory)/VLC.zip
-  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
+      sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+      sudo apt-get update -qq
+      sudo apt-get -y install zip git
+      git clone https://github.com/omega-gg/VLC
+      cd VLC
+      sh build.sh linuxSnap
+      cd deploy
+      zip -rq /tmp/VLC.zip *
+    workingDirectory: /tmp
+  - publish: /tmp/VLC.zip
     artifact: VLC-linux64
 
 #--------------------------------------------------------------------------------------------------
