@@ -25,7 +25,7 @@ if [ $# != 1 ] \
    [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "linuxSnap" -a \
      $1 != "android" ]; then
 
-    echo "Usage: build <win32 | win64 | macOS | linux | android>"
+    echo "Usage: build <win32 | win64 | macOS | linux | linuxSnap | android>"
 
     exit 1
 fi
@@ -81,6 +81,14 @@ rm -rf vlc-$VLC_version
 if [ $1 = "linux" ]; then
 
     sudo apt-get -y install build-essential pkg-config libtool automake autopoint gettext
+
+elif [ $1 = "linuxSnap" ]; then
+
+    sudo apt-get -y install squashfs-tools
+
+    if ! command -v snapcraft > /dev/null 2>&1; then
+        sudo snap install snapcraft --classic
+    fi
 
 #elif [ $1 = "android" ]; then
 #

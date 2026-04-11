@@ -97,9 +97,7 @@ parts:
         --host=${CRAFT_ARCH_TRIPLET_BUILD_FOR} \
         --prefix=/usr \
         --enable-merge-ffmpeg \
-        --enable-extra-checks \
-        --disable-qt-qml-cache \
-        --disable-pipewire
+        --disable-wayland
       make -j ${CRAFT_PARALLEL_BUILD_COUNT}
       make install DESTDIR="${CRAFT_PART_INSTALL}"
 
@@ -206,7 +204,6 @@ parts:
       - libavahi-client-dev
       - libcdio-dev
       - libdbus-1-dev
-      - libdirectfb-dev
       - libdrm-dev
       - libegl1-mesa-dev
       - libfreetype-dev
@@ -361,7 +358,6 @@ parts:
       - mesa-va-drivers
       - mesa-vdpau-drivers
       - mesa-vulkan-drivers
-      - openjdk-8-jdk
       - vdpau-driver-all
       - zlib1g
 
@@ -402,5 +398,5 @@ parts:
       set -eux
       for snap in "core22" "kde-qt5-core22"
       do
-        cd "/snap/$snap/current" && find . -type f,l -a ! -path "*vlc*" -exec rm -rf "{$CRAFT_PRIME}/{}" \;
+        cd "/snap/$snap/current" && find . \( -type f -o -type l \) ! -path "*vlc*" -exec rm -rf "${CRAFT_PRIME}/{}" \;
       done
