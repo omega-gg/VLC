@@ -84,6 +84,8 @@ if [ $1 = "linux" ]; then
 
 elif [ $1 = "linuxSnap" ]; then
 
+    sudo add-apt-repository -y universe
+    sudo apt-get update -qq
     sudo apt-get -y install squashfs-tools
     sudo snap install snapcraft --classic
 
@@ -192,7 +194,10 @@ elif [ $1 = "linuxSnap" ]; then
 
     sed -i "s|source: \.|source: /tmp/vlc-source.tar|" snap/snapcraft.yaml
 
-    snapcraft --destructive-mode
+    # Refresh apt cache so snapcraft can resolve all build-packages
+    sudo apt-get update -qq
+
+    snapcraft pack --destructive-mode
 
 elif [ $1 = "android" ]; then
 
