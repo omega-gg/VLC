@@ -29,8 +29,6 @@ apps:
   vlc:
     desktop: vlc.desktop
     command: usr/bin/vlc-snap-wrapper.sh
-    extensions:
-      - kde-neon
     common-id: org.videolan.vlc
     plugs:
       - audio-playback
@@ -56,10 +54,9 @@ parts:
     source: .
     source-type: tar
     plugin: nil
-    build-environment:
-      - PATH: /snap/kde-qt5-core22-sdk/current/usr/bin${PATH:+:$PATH}
     override-pull: |
       craftctl default
+      craftctl set-version "3.0.23"
     override-build: |
       cd extras/tools
       ./bootstrap
@@ -386,17 +383,3 @@ parts:
     after: [wrapper]
     override-build: |
       sed -i -E 's,(^.+"library_path": ")/.*\/,\1,' ${CRAFT_STAGE}/usr/share/vulkan/icd.d/*.json
-
-  cleanup:
-    after:
-      - fixup-vulkan-icd-paths
-    plugin: nil
-    build-snaps:
-      - core22
-      - kde-qt5-core22
-    override-prime: |
-      set -eux
-      for snap in "core22" "kde-qt5-core22"
-      do
-        cd "/snap/$snap/current" && find . \( -type f -o -type l \) ! -path "*vlc*" -exec rm -rf "${CRAFT_PRIME}/{}" \;
-      done
