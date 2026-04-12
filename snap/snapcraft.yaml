@@ -1,6 +1,5 @@
 name: vlc
-adopt-info: vlc
-version: "daily"
+version: "3.0.23"
 grade: stable
 base: core22
 summary: Read, capture, broadcast your multimedia streams
@@ -10,206 +9,120 @@ description: |
   VCDs, and various streaming protocols.
   NOTE. This snap contains an untested daily build of VLC
 confinement: strict
-compression: lzo
-
-plugs:
-  desktop:
-    mount-host-font-cache: false
-  dot-config-aacs:
-    interface: personal-files
-    read:
-      - $HOME/.config/aacs
-
-hooks:
-  configure:
-    plugs:
-      - desktop
 
 apps:
   vlc:
-    desktop: vlc.desktop
-    command: usr/bin/vlc-snap-wrapper.sh
+    desktop: usr/share/applications/vlc.desktop
+    command: bin/desktop-launch $SNAP/bin/vlc-snap-wrapper.sh
     common-id: org.videolan.vlc
     plugs:
-      - audio-playback
-      - audio-record
-      - avahi-control
-      - avahi-observe
-      - camera
-      - dot-config-aacs
-      - dvb
-      - hardware-observe
+      - unity7
+      - network
+      - network-bind
       - home
+      - opengl
+      - pulseaudio
       - mount-observe
-      - media-control
       - optical-drive
+      - camera
       - removable-media
       - screen-inhibit-control
-      - udisks2
+      - x11
+      - desktop
+      - desktop-legacy
+      - dvb
+      - audio-playback
+      - audio-record
+      - jack1
+      - avahi-control
     slots:
       - mpris
 
 parts:
+  desktop-qt5-vlc:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-commit: 622e2aa7a840b3a7dbb6ea4d432d687d5cc2e8ef
+    source-subdir: qt/
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5
+      - locales-all
+
   vlc:
-    source: .
-    source-type: tar
-    plugin: nil
-    override-pull: |
-      craftctl default
-      craftctl set-version "3.0.23"
+    after: [desktop-qt5-vlc]
+    source: ../../../
+    source-type: git
+    plugin: autotools
     override-build: |
+      sed -i 's|0\.19\.8|0\.19\.7|' configure.ac
       cd extras/tools
-      ./bootstrap
-      make -j ${CRAFT_PARALLEL_BUILD_COUNT} all
+      NEEDED="ninja" ./bootstrap
+      make -j $(nproc)
       cd ../../
 
       export PATH=$PWD/extras/tools/build/bin:${PATH}
-      export LD_LIBRARY_PATH=$(pwd)/src/.libs/:$(pwd)/lib/.libs/:${LD_LIBRARY_PATH}
-
-      export VLC_CONTRIB_SHA="$(extras/ci/get-contrib-sha.sh)"
-      export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc/snap/vlc-contrib-${CRAFT_ARCH_TRIPLET_BUILD_FOR}-${VLC_CONTRIB_SHA}.tar.bz2"
-      if ! extras/ci/check-url.sh "$VLC_PREBUILT_CONTRIBS_URL"; then unset VLC_PREBUILT_CONTRIBS_URL; fi
-
       cd contrib && mkdir linux && cd linux
       ../bootstrap \
-        --host=${CRAFT_ARCH_TRIPLET_BUILD_FOR} \
-        --enable-libdsm \
-        --enable-dvdcss
-      if [ -v VLC_PREBUILT_CONTRIBS_URL ]; then
-        make prebuilt PREBUILT_URL="$VLC_PREBUILT_CONTRIBS_URL"
-        make -j ${CRAFT_PARALLEL_BUILD_COUNT} tools
+          --host=${CRAFT_ARCH_TRIPLET_BUILD_FOR} \
+          --enable-libdsm \
+          --enable-dvdcss \
+          --disable-chromaprint
+      if [ -n "$VLC_PREBUILT_CONTRIBS_URL" ]; then
+          make prebuilt PREBUILT_URL="$VLC_PREBUILT_CONTRIBS_URL"
       else
-        make list
-        make -j ${CRAFT_PARALLEL_BUILD_COUNT} fetch
-        make -j ${CRAFT_PARALLEL_BUILD_COUNT} -k || make -j1
-        if [ -f "$CRAFT_PROJECT_DIR/snap-save-prebuilt" ]; then
+          make list
+          make -j $(nproc) fetch
+          make -j $(nproc) -k install || make -j1
           make package
-          mv ../vlc-contrib-*.tar.bz2 $CRAFT_PROJECT_DIR/contrib || true
-        fi
       fi
-      cd ../..
+      cd ../../
 
-      ./bootstrap
+      export NOCONFIGURE=1
+      autoreconf -fi
       ./configure \
-        --host=${CRAFT_ARCH_TRIPLET_BUILD_FOR} \
-        --prefix=/usr \
-        --enable-merge-ffmpeg \
-        --disable-wayland
-      make -j ${CRAFT_PARALLEL_BUILD_COUNT}
-      make install DESTDIR="${CRAFT_PART_INSTALL}"
-
-      cp ${CRAFT_PART_INSTALL}/usr/share/icons/hicolor/256x256/apps/vlc.png ${CRAFT_PART_INSTALL}/vlc.png
-      cp ${CRAFT_PART_INSTALL}/usr/share/applications/vlc.desktop ${CRAFT_PART_INSTALL}/vlc.desktop
-      sed -i 's/\(^Icon=\).*$/\1\/vlc.png/' ${CRAFT_PART_INSTALL}/vlc.desktop
-      sed -i 's|TryExec=.*|TryExec=/snap/bin/vlc|' ${CRAFT_PART_INSTALL}/vlc.desktop
+          --prefix=${CRAFT_PART_INSTALL}/usr \
+          --disable-wayland \
+          --enable-merge-ffmpeg
+      make -j $(nproc)
+      make install
+      sed -i 's|Icon=vlc|Icon=/usr/share/icons/hicolor/256x256/apps/vlc\.png|' ${CRAFT_PART_INSTALL}/usr/share/applications/vlc.desktop
+      sed -i 's|TryExec=.*|TryExec=/snap/bin/vlc|' ${CRAFT_PART_INSTALL}/usr/share/applications/vlc.desktop
 
     build-packages:
-      # build tools
       - ant
-      - autopoint
       - git
       - g++
-      - gperf
-      - nasm
       - make
+      - nasm
       - autoconf
       - libtool
       - libtool-bin
       - cmake
       - automake
       - build-essential
-      - curl
-      - gettext
-      - openjdk-11-jdk-headless
-      - python3
-      - python3-pip
-      - python3-venv
-      - python3-jinja2
-      - lua5.2
-      - pkg-config
-      - xz-utils
-      - zlib1g-dev
-      - bison
-      - flex
-      ##
-      - glslang-dev
-      - libaom-dev
-      - libarchive-dev
-      - libaribb24-dev
-      - libasound2-dev
-      - libass-dev
-      - libavcodec-dev
-      - libavdevice-dev
-      - libavfilter-dev
-      - libavformat-dev
-      - libavutil-dev
-      - libbluray-dev
-      - libcaca-dev
-      - libchromaprint-dev
-      - libdav1d-dev
-      - libdca-dev
-      - libdvbpsi-dev
-      - libdvbcsa-dev
-      - libdvdnav-dev
-      - libdvdread-dev
-      - libebur128-dev
-      - libfaad-dev
-      - libffi-dev
-      - libflac-dev
-      - libfluidsynth-dev
-      - libgmp-dev
-      - libgsm1-dev
-      - libjack-dev
-      - libjpeg-turbo8-dev
-      - libkate-dev
-      - libmad0-dev
-      - libmatroska-dev
-      - libmodplug-dev
-      - libmpeg2-4-dev
-      - libmpcdec-dev
-      - libmpg123-dev
-      - libmysofa-dev
-      - libnfs-dev
-      - libogg-dev
-      - liborc-0.4-dev
-      - libplacebo-dev
-      - libpango1.0-dev
-      - libpostproc-dev
-      - libsamplerate0-dev
-      - libshout-dev
-      - libsidplay2-dev
-      - libsoxr-dev
-      - libspatialaudio-dev
-      - libspeex-dev
-      - libspeexdsp-dev
-      - libsrt-gnutls-dev
-      - libssh2-1-dev
-      - libswresample-dev
-      - libswscale-dev
-      - libtag1-dev
-      - libtheora-dev
-      - libtwolame-dev
-      - libupnp-dev
-      - libvncserver-dev
-      - libvorbis-dev
-      - libvpx-dev
-      - libx264-dev
-      - libx265-dev
-      - libxcb1-dev
       - libxcb-xfixes0-dev
+      - libqt5svg5-dev
       - libasound2-dev
       - libavahi-client-dev
       - libcdio-dev
       - libdbus-1-dev
-      - libdrm-dev
       - libegl1-mesa-dev
+      - freerdp2-dev
       - libfreetype-dev
       - libfribidi-dev
-      - libgbm-dev
       - libgles2-mesa-dev
       - libgnutls28-dev
-      - libglib2.0-dev
-      - libgme-dev
       - libgtk-3-dev
       - libidn-dev
       - libjack-dev
@@ -219,17 +132,17 @@ parts:
       - libncurses-dev
       - libpng-dev
       - libpulse-dev
-      - librist-dev
+      - libqt5x11extras5-dev
+      - qtbase5-dev
+      - qtbase5-private-dev
       - librsvg2-dev
       - libsecret-1-dev
-      - libsqlite3-dev
       - libudev-dev
       - libv4l-dev
       - libva-dev
       - libvdpau-dev
       - libx11-dev
       - libxcb-composite0-dev
-      - libxcb-damage0-dev
       - libxcb-keysyms1-dev
       - libxcb-randr0-dev
       - libxcb-shm0-dev
@@ -242,144 +155,95 @@ parts:
       - libxml2-dev
       - libxpm-dev
       - libzvbi-dev
+      - lua5.2
+      - pkg-config
+      - xz-utils
+      - zlib1g-dev
+      - bison
+      - flex
       - libvulkan-dev
-      - libgcrypt20-dev
-      - libsystemd-dev
-      - wayland-protocols
 
     stage-packages:
-      - on amd64:
-        - i965-va-driver
-        - intel-media-va-driver
-      - dbus-x11
       - fonts-freefont-ttf
-      - libaacs0
-      - libaom3
-      - libarchive13
-      - libaribb24-0
-      - libasound2
-      - libass9
-      - libatk1.0-0
-      - libavcodec58
-      - libavformat58
-      - libavutil56
-      - libbluray2
-      - libcaca0
-      - libchromaprint1
-      - libdav1d5
-      - libdb5.3
-      - libdca0
-      - libdvbpsi10
-      - libdvbcsa1
-      - libdvdnav4
-      - libdvdread8
-      - libebur128-1
-      - libfluidsynth3
+      - dbus-x11
+      - libegl-mesa0
+      - libfreerdp-client2-2
+      - libfreerdp2-2
       - libfreetype6
       - libfribidi0
+      - libdb5.3
       - libgcc-s1
-      - libgcrypt20
+      - libgl1-mesa-dri
       - libgles2
       - libglib2.0-0
-      - libglu1-mesa
-      - libgme0
-      - libgtk-3-0
-      - libidn12
-      - libjack0
-      - libkate1
-      - liblua5.2-0
-      - libmad0
-      - libmatroska7
-      - libmodplug1
-      - libmp3lame0
-      - libmpeg2-4
-      - libmpcdec6
-      - libmpg123-0
-      - libmtp9
-      - libmysofa1
-      - libnfs13
-      - libnotify4
-      - libopenjp2-7
-      - liborc-0.4-0
-      - libpango-1.0-0
-      - libplacebo192
-      - libpostproc55
       - libpulse0
-      - librist4
+      - libqt5core5a
+      - libqt5gui5
       - librsvg2-2
-      - libsamplerate0
       - libsecret-1-0
-      - libshout3
-      - libsndio7.0
-      - libsoxr0
-      - libspatialaudio0
-      - libspeex1
-      - libspeexdsp1
-      - libsqlite3-0
-      - libsrt1.4-gnutls
-      - libssh2-1
-      - libswresample3
-      - libswscale5
-      - libtag1v5-vanilla
-      - libtheora0
-      - libtwolame0
-      - libupnp13
       - libva-drm2
-      - libva-wayland2
       - libva-x11-2
       - libva2
       - libvdpau1
-      - libvncclient1
-      - libvorbisfile3
-      - libvpx7
-      - libvulkan1
       - libx11-6
-      - libx264-163
-      - libx265-199
       - libxcb-composite0
-      - libxcb-damage0
       - libxcb-keysyms1
       - libxcb-randr0
       - libxcb-shm0
+      - libxcb-xv0
       - libxcb1
-      - libxcomposite1
-      - libxcursor1
       - libxext6
       - libxi6
       - libxinerama1
       - libxkbcommon-x11-0
       - libxpm4
-      - libxrandr2
-      - libzvbi0
-      - mesa-utils
-      - mesa-va-drivers
-      - mesa-vdpau-drivers
-      - mesa-vulkan-drivers
       - vdpau-driver-all
+      - on amd64:
+        - i965-va-driver
+        - intel-media-va-driver
+      - mesa-utils
+      - mesa-vdpau-drivers
       - zlib1g
+      - kde-style-breeze
+      - breeze-icon-theme
+      - frameworkintegration
+      - plasma-integration
+      - phonon4qt5-backend-null
+      - libjack0
+      - libasound2
+      - libgtk-3-0
+      - liblua5.2-0
+      - libmtp9
+      - libzvbi0
+      - libnotify4
+      - libvulkan1
+      - libaacs0
+      - mesa-vulkan-drivers
+      - libvulkan-dev
+      - openjdk-11-jdk-headless
 
+    filesets:
+      exclusion:
+        - "-usr/lib/*/cmake/*"
+        - "-usr/include/*"
+        - "-usr/share/ECM/*"
+        - "-usr/share/doc/*"
+        - "-usr/share/man/*"
+        - "-usr/bin/X11"
+        - "-usr/lib/gcc/*/6.0.0"
+        - "-usr/lib/aspell/*"
     prime:
-      #excluded
-      - "-usr/lib/*/cmake/*"
-      - "-usr/include/*"
-      - "-usr/share/ECM/*"
-      - "-usr/share/doc/*"
-      - "-usr/share/man/*"
-      - "-usr/share/icons/breeze-dark*"
-      - "-usr/bin/X11"
-      - "-usr/lib/gcc/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/6.0.0"
-      - "-usr/lib/aspell/*"
-      - "-usr/share/lintain"
+      - $exclusion
 
   wrapper:
     plugin: dump
     after: [vlc]
-    source: extras/package/snap
+    source: .
     organize:
-      vlc-snap-wrapper.sh: usr/bin/vlc-snap-wrapper.sh
+      vlc-snap-wrapper.sh: bin/vlc-snap-wrapper.sh
 
   fixup-vulkan-icd-paths:
     plugin: nil
     after: [wrapper]
     override-build: |
-      sed -i -E 's,(^.+"library_path": ")/.*\/,\1,' ${CRAFT_STAGE}/usr/share/vulkan/icd.d/*.json
+      sed -i -E 's,(^.+"library_path": ")/.*/,\1,' ${CRAFT_STAGE}/usr/share/vulkan/icd.d/*.json

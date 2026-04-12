@@ -84,10 +84,7 @@ if [ $1 = "linux" ]; then
 
 elif [ $1 = "linuxSnap" ]; then
 
-    sudo add-apt-repository -y universe
-    sudo apt-get update -qq
-    sudo apt-get -y install squashfs-tools
-    sudo snap install snapcraft --classic
+    apt-get -y install squashfs-tools
 
 #elif [ $1 = "android" ]; then
 #
@@ -187,17 +184,18 @@ if [ $os = "windows" ]; then
 
 elif [ $1 = "linuxSnap" ]; then
 
-    # NOTE: Create a tar of the source to avoid snapcraft's local copy issues
-    tar cf /tmp/vlc-source.tar .
+    # NOTE: Replace official snapcraft.yaml with our core22-compatible version.
+    # Run from extras/package/snap/ so that source: ../../../ resolves to the VLC root,
+    # matching the VideoLAN approach exactly.
+    cp $PWD/../snap/snapcraft.yaml extras/package/snap/snapcraft.yaml
 
-    cp -r $PWD/../snap .
+    cd extras/package/snap
 
-    sed -i "s|source: \.|source: /tmp/vlc-source.tar|" snap/snapcraft.yaml
+    # NOTE: SNAPCRAFT_BUILD_ENVIRONMENT=host is set by the Docker container
+    snapcraft pack
 
-    # Refresh apt cache so snapcraft can resolve all build-packages
-    sudo apt-get update -qq
-
-    snapcraft pack --destructive-mode
+    mv vlc_*.snap ../../../
+    cd ../../..
 
 elif [ $1 = "android" ]; then
 

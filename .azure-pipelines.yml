@@ -18,16 +18,18 @@ jobs:
   steps:
   - checkout: none
   - bash: |
-      sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
       sudo apt-get update -qq
-      sudo apt-get -y install zip git
+      sudo apt-get -y install zip git docker.io
+      sudo systemctl start docker
       git clone https://github.com/omega-gg/VLC
-      cd VLC
-      sh build.sh linuxSnap
-      cd deploy
-      zip -rq /tmp/VLC.zip *
-    workingDirectory: /tmp
-  - publish: /tmp/VLC.zip
+      docker build -t vlc-snap VLC/snap
+      chmod 777 .
+      docker run -d --name vlc-snap -v $PWD:/VLC vlc-snap tail -f /dev/null
+      docker exec -t vlc-snap bash -c "cd /VLC/VLC &&
+                                       sh build.sh linuxSnap"
+      cd VLC/deploy
+      zip -rq ../../VLC.zip *
+  - publish: $(System.DefaultWorkingDirectory)/VLC.zip
     artifact: VLC-linux64
 
 #--------------------------------------------------------------------------------------------------
