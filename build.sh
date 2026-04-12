@@ -9,7 +9,7 @@ external="$PWD/../3rdparty"
 
 #--------------------------------------------------------------------------------------------------
 
-VLC_version="3.0.23"
+VLC_version="3.0.16"
 
 #--------------------------------------------------------------------------------------------------
 # Android
@@ -22,10 +22,9 @@ VLC_version_android="libvlc-3.6.0"
 
 if [ $# != 1 ] \
    || \
-   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "linuxSnap" -a \
-     $1 != "android" ]; then
+   [ $1 != "win32" -a $1 != "win64" -a $1 != "macOS" -a $1 != "linux" -a $1 != "android" ]; then
 
-    echo "Usage: build <win32 | win64 | macOS | linux | linuxSnap | android>"
+    echo "Usage: build <win32 | win64 | macOS | linux | android>"
 
     exit 1
 fi
@@ -51,11 +50,7 @@ fi
 
 #--------------------------------------------------------------------------------------------------
 
-if [ $1 = "linuxSnap" ]; then
-
-    VLC_url="https://code.videolan.org/videolan/vlc.git"
-
-elif [ $1 = "android" ]; then
+if [ $1 = "android" ]; then
 
     VLC_url="https://code.videolan.org/videolan/vlc-android"
 else
@@ -82,10 +77,6 @@ if [ $1 = "linux" ]; then
 
     sudo apt-get -y install build-essential pkg-config libtool automake autopoint gettext
 
-elif [ $1 = "linuxSnap" ]; then
-
-    apt-get -y install squashfs-tools
-
 #elif [ $1 = "android" ]; then
 #
 #    sudo apt-get -y install automake ant autopoint cmake build-essential libtool-bin patch \
@@ -97,7 +88,7 @@ fi
 # Download
 #--------------------------------------------------------------------------------------------------
 
-if [ $1 != "linuxSnap" -a $1 != "android" ]; then
+if [ $1 != "android" ]; then
 
     echo ""
     echo "DOWNLOADING VLC"
@@ -119,7 +110,7 @@ if [ $os = "windows" ]; then
     7z x VLC.tar.xz > /dev/null
     7z x VLC.tar    > /dev/null
 
-elif [ $1 != "linuxSnap" -a $1 != "android" ]; then
+elif [ $1 != "android" ]; then
 
     echo ""
     echo "EXTRACTING VLC"
@@ -131,7 +122,7 @@ fi
 # Clone
 #--------------------------------------------------------------------------------------------------
 
-if [ $1 = "linuxSnap" -o $1 = "android" ]; then
+if [ $1 = "android" ]; then
 
     echo ""
     echo "CLONING VLC"
@@ -165,7 +156,7 @@ if [ $1 = "linux" ]; then
 
     ./configure --prefix=$PWD/../deploy
 
-elif [ $1 = "linuxSnap" -o $1 = "android" ]; then
+elif [ $1 = "android" ]; then
 
     git checkout tags/$VLC_version
 fi
@@ -182,21 +173,6 @@ if [ $os = "windows" ]; then
     mingw32-make
     mingw32-make install
 
-elif [ $1 = "linuxSnap" ]; then
-
-    # NOTE: Replace official snapcraft.yaml with our core22-compatible version.
-    # Run from extras/package/snap/ so that source: ../../../ resolves to the VLC root,
-    # matching the VideoLAN approach exactly.
-    cp $PWD/../snap/snapcraft.yaml extras/package/snap/snapcraft.yaml
-
-    cd extras/package/snap
-
-    # NOTE: SNAPCRAFT_BUILD_ENVIRONMENT=host is set by the Docker container
-    snapcraft pack
-
-    mv vlc_*.snap ../../../
-    cd ../../..
-
 elif [ $1 = "android" ]; then
 
     # NOTE: Only build LibVLC and bypass source checks.
@@ -210,20 +186,7 @@ fi
 # Deploy
 #--------------------------------------------------------------------------------------------------
 
-if [ $1 = "linuxSnap" ]; then
-
-    echo ""
-    echo "DEPLOYING VLC"
-
-    unsquashfs -f -d data vlc_*.snap
-
-    mkdir -p ../deploy/$1
-
-    mv data/* ../deploy/$1
-
-    rm -rf data
-
-elif [ $1 = "android" ]; then
+if [ $1 = "android" ]; then
 
     echo ""
     echo "DEPLOYING VLC"
